@@ -1,6 +1,4 @@
-MELANGE=~/Open-Dylan/bin/melange
-
-OPEN_DYLAN_USER_REGISTRIES = $(CURDIR)/registry
+MELANGE=melange
 
 all: ext/libgit2/libgit2.a build
 
@@ -15,7 +13,7 @@ ifeq ($(UNAME), Darwin)
   EXTRA_CFLAGS="-arch i386 -arch x86_64"
 endif
 
-%.dylan: %.intr $(MELANGE)
+%.dylan: %.intr
 	$(MELANGE) -Tc-ffi -Iext/libgit2/include $< $@
 
 ext/libgit2/libgit2.a:
@@ -26,4 +24,4 @@ build: $(GENERATED_DYLAN_FILES)
 
 test: $(GENERATED_DYLAN_FILES)
 	dylan-compiler -build libgit2-test-suite-app
-	~/Open-Dylan/bin/libgit2-test-suite-app
+	_build/bin/libgit2-test-suite-app
