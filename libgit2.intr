@@ -3,6 +3,23 @@ synopsis: generated bindings for the libgit2 library
 author: Bruce Mitchener, Jr.
 copyright: See LICENSE file in this distribution.
 
+define class <libgit2-error> (<error>)
+  constant slot libgit2-error-status :: <integer>, required-init-keyword: status:;
+  constant slot libgit2-error-message :: <string>, init-keyword: message:, init-value: "Unknown error";
+end;
+
+define C-mapped-subtype <libgit2-status> (<C-int>)
+  import-map <integer>,
+    import-function:
+      method (result :: <integer>) => (checked :: <integer>)
+        if (result < 0)
+          error(make(<libgit2-error>, status: result, message: ""));
+        else
+          result;
+        end;
+      end;
+end;
+
 define interface
   #include {
     "git2/attr.h",
@@ -58,23 +75,30 @@ define interface
     };
 
   function "git_repository_open",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_open_ext",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_init",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_head",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_config",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_odb",
+    map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_index",
+    map-result: <libgit2-status>,
     output-argument: 1;
 end interface;
