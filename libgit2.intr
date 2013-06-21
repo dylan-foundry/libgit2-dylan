@@ -1,4 +1,7 @@
 module: libgit2
+synopsis: generated bindings for the libgit2 library
+author: Bruce Mitchener, Jr.
+copyright: See LICENSE file in this distribution.
 
 define interface
   #include {
