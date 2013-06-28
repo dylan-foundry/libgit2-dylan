@@ -10,6 +10,9 @@ end library;
 define module libgit2
   use common-dylan;
   use c-ffi;
+
+  export <libgit2-error>;
+
   export
     $GIT-ATTR-CHECK-FILE-THEN-INDEX,
     $GIT-ATTR-CHECK-INDEX-ONLY,
