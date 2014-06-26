@@ -1,8 +1,8 @@
 This library wraps `libgit2`_.
 
-Be sure to clone this recursively:
+Be sure to clone this recursively::
 
-  git clone --recursive <url for repo>
+    git clone --recursive <url for repo>
 
 To do a build, use ``make`` so that the appropriate steps
 are executed.
