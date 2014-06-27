@@ -1,3 +1,4 @@
 *.hdp
 _build
 libgit2.dylan
+temp_*

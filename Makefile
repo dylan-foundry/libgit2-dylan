@@ -23,5 +23,6 @@ build: $(GENERATED_DYLAN_FILES)
 	dylan-compiler -build libgit2
 
 test: $(GENERATED_DYLAN_FILES)
+	rm -rf temp_*
 	dylan-compiler -build libgit2-test-suite-app
 	_build/bin/libgit2-test-suite-app
