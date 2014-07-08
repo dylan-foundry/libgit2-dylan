@@ -11,6 +11,7 @@ end library;
 
 define module libgit2-test-suite
   use common-dylan, exclude: { format-to-string };
+  use format-out;
   use format;
   use libgit2;
   use testworks;

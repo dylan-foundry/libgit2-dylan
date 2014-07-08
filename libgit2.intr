@@ -13,7 +13,8 @@ define C-mapped-subtype <libgit2-status> (<C-int>)
     import-function:
       method (result :: <integer>) => (checked :: <integer>)
         if (result < 0)
-          error(make(<libgit2-error>, status: result, message: ""));
+          let err = giterr-last();
+          error(make(<libgit2-error>, status: result, message: git-error$message(err)));
         else
           result;
         end;
@@ -39,15 +40,15 @@ define interface
     "git2/filter.h",
     "git2/graph.h",
     "git2/ignore.h",
-    "git2/index.h",
     "git2/indexer.h",
+    "git2/index.h",
     "git2/merge.h",
     "git2/message.h",
     "git2/net.h",
     "git2/notes.h",
     "git2/object.h",
-    "git2/odb.h",
     "git2/odb_backend.h",
+    "git2/odb.h",
     "git2/oid.h",
     "git2/pack.h",
     "git2/patch.h",
@@ -87,35 +88,29 @@ define interface
     "git2/types.h",
     "git2/version.h"
     },
-    equate: {"char *" => <c-string>},
-    exclude: {
-      "git_blob_id",
-      "git_blob_lookup",
-      "git_blob_lookup_prefix",
-      "git_blob_free",
-      "git_commit_id",
-      "git_commit_lookup",
-      "git_commit_lookup_prefix",
-      "git_commit_free",
-      "git_oid_cmp",
-      "git_oid_equal",
-      "git_tag_lookup",
-      "git_tag_lookup_prefix",
-      "git_tag_free",
-      "git_tree_lookup",
-      "git_tree_lookup_prefix",
-      "git_tree_free"
-    };
+    equate: {"char *" => <c-string>};
 
-  function "git_repository_open",
+  function "git_repository_open" => %git-repository-open,
     map-result: <libgit2-status>,
     output-argument: 1;
 
-  function "git_repository_open_ext",
+  function "git_repository_open_ext" => %git-repository-open-ext,
     map-result: <libgit2-status>,
     output-argument: 1;
 
-  function "git_repository_init",
+  function "git_repository_open_bare",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_repository_init" => %git-repository-init,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_repository_init_ext" => %git-repository-init-ext,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_clone" => %git-clone,
     map-result: <libgit2-status>,
     output-argument: 1;
 
@@ -134,4 +129,37 @@ define interface
   function "git_repository_index",
     map-result: <libgit2-status>,
     output-argument: 1;
+
+  function "git_remote_create",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_remote_create_with_fetchspec",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_clone_into" => %git-clone-into,
+    map-result: <libgit2-status>;
+
+  function "git_config_set_bool",
+    map-argument: { "value" => <C-boolean> },
+    map-result: <libgit2-status>;
+
+  // TODO: check other git_config_set functions
+
+  // setting output-argument: 1 would result in an error (No next method)
+  // so I'm just renaming it, then defining a wrapper below.
+  function "git_oid_fromstr" => %git-oid-from-string,
+    map-result: <libgit2-status>;
+
+  function "git_oid_allocfmt" => %git-oid-allocfmt;
+
+  function "git_commit_lookup",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_commit_lookup_prefix",
+    map-result: <libgit2-status>,
+    output-argument: 1;
 end interface;
+
