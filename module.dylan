@@ -3,6 +3,7 @@ module: dylan-user
 define module libgit2
   use common-dylan;
   use c-ffi;
+  use format-out;
   export
     git-repository-init,
     git-repository-open,
@@ -10,6 +11,9 @@ define module libgit2
     git-oid-to-string,
     git-clone,
     git-clone-into,
+    git-blob-create-from-working-directory,
+    git-blob-create-from-disk,
+    git-blob-create-from-buffer,
     <libgit2-error>;
 
   export
@@ -469,7 +473,6 @@ define module libgit2
     <action>,
     <append>,
     <buffer-signature>,
-    <c-string>,
     <callback>,
     <cancel>,
     <cb>,
@@ -930,10 +933,7 @@ define module libgit2
     git-blame-options$oldest-commit-setter,
     git-blame-options$version,
     git-blame-options$version-setter,
-    git-blob-create-frombuffer,
     git-blob-create-fromchunks,
-    git-blob-create-fromdisk,
-    git-blob-create-fromworkdir,
     git-blob-filtered-content,
     git-blob-free,
     git-blob-id,

@@ -7,6 +7,7 @@ files:        library
               module
               utilities
               libgit2
+              blob
               checkout
               clone
               oid

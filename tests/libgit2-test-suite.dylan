@@ -149,7 +149,46 @@ define suite libgit2-objects-test-suite ()
   test lookups-test;
 end suite;
 
+define test blobs-content-test ()
+  // ./temp_testrepo/test/alias.c
+  let sha = "6c8775cb01546b6855a15f07aae660585d48b491";
+  let (err1, oid) = git-oid-from-string(sha);
+  check-equal("commit found", err1, 0);
+
+  let (err2, repo) = git-repository-open("./temp_testrepo");
+  check-equal("repo opened", err2, 0);
+
+  let (err3, blob) = git-blob-lookup(repo, oid);
+  check-equal("git-blob-lookup did not error", err3, 0);
+
+  let raw-size = git-blob-rawsize(blob);
+  
+  let raw-content = git-blob-rawcontent(blob);
+  check-false("git-blob-rawcontent did return something", null-pointer?(raw-content));
+
+  let (err4, filtered-content) = git-blob-filtered-content(blob, "test/alias.c", #t);
+end test;
+
+define test blobs-create-test ()
+  let (_, repo) = git-repository-open("./temp_testrepo");
+
+  let (err1, _) = git-blob-create-from-working-directory(repo, "test/alias.c");
+  check-equal("git-blob-create-from-working-directory did not error", err1, 0);
+
+  let (err2, _) = git-blob-create-from-disk(repo, "/etc/hosts");
+  check-equal("git-blob-create-from-disk did not error", err2, 0);
+
+  let (err3, _) = git-blob-create-from-buffer(repo, "Hello there!");
+  check-equal("git-blob-create-from-buffer did not error", err3, 0);
+end test;
+
+define suite libgit2-blobs-test-suite ()
+  test blobs-content-test;
+  test blobs-create-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
+  suite libgit2-blobs-test-suite;
 end suite;

@@ -161,5 +161,25 @@ define interface
   function "git_commit_lookup_prefix",
     map-result: <libgit2-status>,
     output-argument: 1;
+
+  function "git_blob_lookup",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_blob_lookup_prefix",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_blob_filtered_content" => %git-blob-filtered-content,
+    map-result: <libgit2-status>;
+
+  function "git_blob_create_fromworkdir" => %git-blob-create-fromworkdir,
+    map-result: <libgit2-status>;
+
+  function "git_blob_create_fromdisk" => %git-blob-create-fromdisk,
+    map-result: <libgit2-status>;
+
+  function "git_blob_create_frombuffer" => %git-blob-create-frombuffer,
+    map-result: <libgit2-status>;
 end interface;
 
