@@ -44,7 +44,7 @@ define method git-repository-open
     (path :: <string>,
      #key flags :: false-or(<integer>) = #f,
      ceiling-directories :: false-or(<string>) = #f)
- => (err, repo)
+ => (err, repo :: <git-repository*>)
   if (flags | ceiling-directories)
     %git-repository-open-ext(path,
                              if (flags) flags else 0 end,

@@ -12,4 +12,5 @@ files:        library
               clone
               oid
               repository
+              tree
 c-object-files: ext/libgit2/libgit2.a

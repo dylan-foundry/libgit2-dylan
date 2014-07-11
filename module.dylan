@@ -14,6 +14,10 @@ define module libgit2
     git-blob-create-from-working-directory,
     git-blob-create-from-disk,
     git-blob-create-from-buffer,
+    git-tree-entry-by-index,
+    git-tree-entry-by-id,
+    git-tree-entry-by-name,
+    git-tree-entry-by-path,
     <libgit2-error>;
 
   export
@@ -2174,10 +2178,6 @@ define module libgit2
     git-transport-register,
     git-transport-smart,
     git-transport-unregister,
-    git-tree-entry-byid,
-    git-tree-entry-byindex,
-    git-tree-entry-byname,
-    git-tree-entry-bypath,
     git-tree-entry-cmp,
     git-tree-entry-dup,
     git-tree-entry-filemode,

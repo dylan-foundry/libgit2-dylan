@@ -181,5 +181,35 @@ define interface
 
   function "git_blob_create_frombuffer" => %git-blob-create-frombuffer,
     map-result: <libgit2-status>;
+
+  function "git_commit_tree",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_tree_lookup",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_tree_entry_byindex" => git-tree-entry-by-index;
+  function "git_tree_entry_byid" => git-tree-entry-by-id;
+  function "git_tree_entry_byname" => git-tree-entry-by-name;
+  function "git_tree_entry_bypath" => git-tree-entry-by-path,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_revparse_single",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_treebuilder_create" => %git-treebuilder-create,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_treebuilder_insert",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_treebuilder_write" => %git-treebuilder-write,
+    map-result: <libgit2-status>;
 end interface;
 

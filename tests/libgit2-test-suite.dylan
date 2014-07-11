@@ -3,6 +3,17 @@ synopsis: Test suite for the libgit2 library.
 
 define constant $repository-url = "git://github.com/github/testrepo.git";
 
+define function default-repository-and-oid
+    () => (repo :: <git-repository*>, oid :: <git-oid*>)
+  let sha = "78cf42b3249a69c0602b8bcb074cb6a61156787f";
+  let (err1, oid) = git-oid-from-string(sha);
+  check-equal("commit found", err1, 0);
+
+  let (err2, repo) = git-repository-open("./temp_testrepo");
+  check-equal("repo opened", err2, 0);
+  values(repo, oid)
+end function default-repository-and-oid;
+
 // Most tests taken from http://libgit2.github.com/docs/guides/101-samples/
 define test init-simple-test ()
   // with working directory...
@@ -131,12 +142,7 @@ define test SHAs-and-OIDs-test ()
 end test;
 
 define test lookups-test ()
-  let sha = "78cf42b3249a69c0602b8bcb074cb6a61156787f";
-  let (err1, oid) = git-oid-from-string(sha);
-  check-equal("commit found", err1, 0);
-
-  let (err2, repo) = git-repository-open("./temp_testrepo");
-  check-equal("repo opened", err2, 0);
+  let (repo, oid) = default-repository-and-oid();
 
   let (err3, commit) = git-commit-lookup(repo, oid);
   check-equal("git-commit-lookup did not error", err3, 0);
@@ -187,8 +193,90 @@ define suite libgit2-blobs-test-suite ()
   test blobs-create-test;
 end suite;
 
+define test trees-lookups-test ()
+  let (repo, oid) = default-repository-and-oid();
+  let (err1, commit) = git-commit-lookup(repo, oid);
+  check-equal("git-commit-lookup did not error", err1, 0);
+
+  let (err2, _) = git-commit-tree(commit);
+  check-equal("git-commit-tree did not error", err2, 0);
+
+  git-commit-free(commit);
+
+  let tree-sha = "cac308be17ad33f3a5bcb2ef2e5eb34f4e28100c";
+  let (_, tree-oid) = git-oid-from-string(tree-sha);
+
+  let (err3, tree) = git-tree-lookup(repo, tree-oid);
+  check-equal("git-tree-lookup did not error", err3, 0);
+
+  let entry = git-tree-entry-by-index(tree, 0);
+  if (git-tree-entry-type(entry) == $GIT-OBJ-TREE)
+    let (err4, subtree) = git-tree-lookup(tree, git-tree-entry-id(entry));
+    check-equal("git-tree-lookup and git-tree-entry-id did not error", err4, 0);
+  end if;
+end test;
+
+define test trees-tree-entries-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, obj) = git-revparse-single(repo, "HEAD^{tree}");
+  check-equal("git-revparse-single did not error", err1, 0);
+
+  let tree = pointer-cast(<git-tree*>, obj);
+  assert-true(size(tree) > 0);
+
+  let entry = git-tree-entry-by-index(tree, 0);
+  let name = git-tree-entry-name(entry); // file name
+  assert-false(null-pointer?(name));
+  let object-type = git-tree-entry-type(entry); // blob or tree
+  let mode = git-tree-entry-filemode(entry); // NIX filemode
+
+  let (err2, entry2) = git-tree-entry-by-path(tree, "test/alloc.c");
+  check-equal("git-tree-entry-by-path did not error", err2, 0);
+  git-tree-entry-free(entry2); // caller has to free this one
+end test;
+
+define test trees-walking-test ()
+  // TODO: implement me
+end test;
+
+define test trees-treebuilder-test ()
+  let (_, bld) = git-treebuilder-create();
+
+  // add some entries
+  let repo = default-repository-and-oid();
+  let (err1, obj) = git-revparse-single(repo, "HEAD:test/alloc.c");
+  check-equal("git-revparse-single did not error", err1, 0);
+
+  let (err2, _) = git-treebuilder-insert(bld,
+                                         "alloc.c", // filename
+                                         git-object-id(obj), // OID
+                                         #o100644); // mode
+  check-equal("git-treebuilder-insert did not error", err2, 0);
+  git-object-free(obj);
+
+  let (_, obj) = git-revparse-single(repo, "HEAD:test/alias.c");
+  git-treebuilder-insert(bld,
+                         "alias.c",
+                         git-object-id(obj),
+                         #o100644);
+  git-object-free(obj);
+
+  let (err3, tree-oid) = git-treebuilder-write(repo, bld);
+  check-equal("git-treebuilder-write did not error", err3, 0);
+  git-treebuilder-free(bld);
+end test;
+
+define suite libgit2-trees-test-suite ()
+  test trees-lookups-test;
+  test trees-tree-entries-test;
+  test trees-walking-test;
+  test trees-treebuilder-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
   suite libgit2-blobs-test-suite;
+  suite libgit2-trees-test-suite;
 end suite;
