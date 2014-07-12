@@ -10,7 +10,9 @@ files:        library
               blob
               checkout
               clone
+              commit
               oid
+              refs
               repository
               tree
 c-object-files: ext/libgit2/libgit2.a

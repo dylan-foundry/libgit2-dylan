@@ -274,9 +274,82 @@ define suite libgit2-trees-test-suite ()
   test trees-treebuilder-test;
 end suite;
 
+define test commits-lookups-test ()
+  let (repo, oid) = default-repository-and-oid();
+  let (err, _) = git-commit-lookup(repo, oid);
+  check-equal("git-commit-lookup did not error", err, 0);
+end test;
+
+define test commits-properties-test ()
+  let (repo, oid) = default-repository-and-oid();
+  let (_, commit) = git-commit-lookup(repo, oid);
+
+  let oid = git-commit-id(commit);
+  let encoding = git-commit-message-encoding(commit);
+  let msg = git-commit-message(commit);
+  let summary = git-commit-summary(commit);
+  let time = git-commit-time(commit);
+  let offset-in-minutes = git-commit-time-offset(commit);
+  let committer = git-commit-committer(commit);
+  let author = git-commit-author(commit);
+  let header = git-commit-raw-header(commit);
+  let tree-id = git-commit-tree-id(commit);
+end test;
+
+define test commits-parents-test ()
+  let (repo, oid) = default-repository-and-oid();
+  let (_, commit) = git-commit-lookup(repo, oid);
+
+  let count = git-commit-parent-count(commit);
+  for (i from 0 below count)
+    let nth-parent-id = git-commit-parent-id(commit, i);
+    assert-true(instance?(nth-parent-id, <git-oid*>));
+
+    let (err1, _) = git-commit-parent(commit, i);
+    check-equal("git-commit-parent did not error", err1, 0);
+  end for;
+  let (err2, nth-ancestor) = git-commit-nth-gen-ancestor(commit, 3);
+  check-equal("git-commit-nth-gen-ancestor did not error", err2, 0);
+end test;
+
+define test commits-create-test ()
+  let (repo, _) = default-repository-and-oid();
+  let (err0, parent-id) = git-reference-name-to-id(repo, "HEAD");
+  let (_, parent1) = git-commit-lookup(repo, parent-id);
+
+  let (err1, me) = git-signature-now("Me", "me@example.com");
+  check-equal("git-signature-now did not error", err1, 0);
+
+  let parents = make(<vector>, size: 1);
+  parents[0] := parent1;
+
+  let (_, blob-id) = git-blob-create-from-buffer(repo, "Hello there!");
+  let (_, blob) = git-blob-lookup(repo, blob-id);
+  let (_, bld) = git-treebuilder-create();
+  git-treebuilder-insert(bld, "README.txt", blob-id, $GIT-FILEMODE-BLOB);
+  let (_, tree-oid) = git-treebuilder-write(repo, bld);
+  let (_, tree) = git-tree-lookup(repo, tree-oid);
+  let (errn, commit-id) = git-commit-create(repo,
+                                            "HEAD", // name or ref to update
+                                            me, // author
+                                            me, // commiter
+                                            "UTF-8", // message encoding
+                                            "The message", // message
+                                            tree, // root tree
+                                            parents);
+end test;
+
+define suite libgit2-commits-test-suite ()
+  test commits-lookups-test;
+  test commits-properties-test;
+  test commits-parents-test;
+  test commits-create-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
   suite libgit2-blobs-test-suite;
   suite libgit2-trees-test-suite;
+  suite libgit2-commits-test-suite;
 end suite;

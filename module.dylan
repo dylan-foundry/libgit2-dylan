@@ -18,6 +18,7 @@ define module libgit2
     git-tree-entry-by-id,
     git-tree-entry-by-name,
     git-tree-entry-by-path,
+    git-commit-parent-count,
     <libgit2-error>;
 
   export
@@ -1056,7 +1057,6 @@ define module libgit2
     git-commit-owner,
     git-commit-parent,
     git-commit-parent-id,
-    git-commit-parentcount,
     git-commit-raw-header,
     git-commit-summary,
     git-commit-time,

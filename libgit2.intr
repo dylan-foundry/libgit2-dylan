@@ -154,11 +154,24 @@ define interface
 
   function "git_oid_allocfmt" => %git-oid-allocfmt;
 
+  function "git_commit_create" => %git-commit-create,
+    map-result: <libgit2-status>;
+
   function "git_commit_lookup",
     map-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_commit_lookup_prefix",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_commit_parentcount" => git-commit-parent-count;
+
+  function "git_commit_parent",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_commit_nth_gen_ancestor",
     map-result: <libgit2-status>,
     output-argument: 1;
 
@@ -210,6 +223,13 @@ define interface
     output-argument: 1;
 
   function "git_treebuilder_write" => %git-treebuilder-write,
+    map-result: <libgit2-status>;
+
+  function "git_signature_now",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_reference_name_to_id" => %git-reference-name-to-id,
     map-result: <libgit2-status>;
 end interface;
 
