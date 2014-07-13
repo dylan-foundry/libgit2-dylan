@@ -337,6 +337,7 @@ define test commits-create-test ()
                                             "The message", // message
                                             tree, // root tree
                                             parents);
+  check-equal("git-commit-create did not error", errn, 0);
 end test;
 
 define suite libgit2-commits-test-suite ()
@@ -346,10 +347,61 @@ define suite libgit2-commits-test-suite ()
   test commits-create-test;
 end suite;
 
+define test references-lookups-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, ref) = git-reference-lookup(repo, "refs/heads/master");
+  check-equal("git-reference-lookup (full name) did not error", err1, 0);
+
+  let (err2, ref) = git-reference-dwim(repo, "master");
+  check-equal("git-reference-dwim (short name) did not error", err2, 0);
+
+  let (err3, ref) = git-reference-name-to-id(repo, "HEAD");
+  check-equal("git-reference-name-to-id (resolved) did not error", err3, 0);
+end test;
+
+define test references-listing-test ()
+  let repo = default-repository-and-oid();
+
+  let (err, refs) = git-reference-list(repo);
+  assert-true(refs);
+  for (ref in refs)
+    assert-true(instance?(ref, <string>));
+  end for;
+end test;
+
+define test references-create-direct-test ()
+  let (repo, oid) = default-repository-and-oid();
+
+  let (err, ref) = git-reference-create(repo,
+                                        "refs/heads/direct", // name
+                                        oid, // target
+                                        force?: #t);
+  check-equal("git-reference-create did not error", err, 0);
+end test;
+
+define test references-create-symbolic-test ()
+  let (repo, oid) = default-repository-and-oid();
+
+  let (err, ref) = git-reference-create(repo,
+                                        "refs/heads/direct", // name
+                                        "refs/heads/master", // target
+                                        force?: #t);
+  check-equal("git-reference-create did not error", err, 0);
+end test;
+
+define suite libgit2-references-test-suite ()
+  test references-lookups-test;
+  test references-listing-test;
+  test references-create-direct-test;
+  test references-create-symbolic-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
   suite libgit2-blobs-test-suite;
   suite libgit2-trees-test-suite;
   suite libgit2-commits-test-suite;
+  suite libgit2-references-test-suite;
 end suite;

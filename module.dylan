@@ -1816,7 +1816,6 @@ define module libgit2
     git-reference-resolve,
     git-reference-set-target,
     git-reference-shorthand,
-    git-reference-symbolic-create,
     git-reference-symbolic-create-matching,
     git-reference-symbolic-set-target,
     git-reference-symbolic-target,

@@ -229,6 +229,25 @@ define interface
     map-result: <libgit2-status>,
     output-argument: 1;
 
+  function "git_reference_create" => %git-reference-create,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_reference_symbolic_create" => %git-reference-symbolic-create,
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_reference_dwim",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_reference_list" => %git-reference-list,
+    map-result: <libgit2-status>;
+
+  function "git_reference_lookup",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
   function "git_reference_name_to_id" => %git-reference-name-to-id,
     map-result: <libgit2-status>;
 end interface;
