@@ -397,6 +397,68 @@ define suite libgit2-references-test-suite ()
   test references-create-symbolic-test;
 end suite;
 
+define constant $tag-name = "v0.5.0";
+define constant $lightweight-tag-name = "v1.0.0";
+
+define test tags-lookups-annotations-test ()
+  let repo = default-repository-and-oid();
+  let (err1, tag) = git-revparse-single(repo, $tag-name);
+  check-equal("git-revparse-single did not error", err1, 0);
+  let tag-oid = git-object-id(tag);
+
+  let (err2, _) = git-tag-lookup(repo, tag-oid);
+  check-equal("git-tag-lookup did not error", err2, 0);
+end test;
+
+define test tags-create-lightweight-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, target) = git-revparse-single(repo, "HEAD^{commit}");
+  check-equal("git-revparse-single did not error", err1, 0);
+
+  let (err2, tag-oid) = git-tag-create-lightweight(repo, $lightweight-tag-name, target, force?: #t);
+  check-equal("git-tag-create-lightweight did not error", err2, 0);
+end test;
+
+define test tags-create-annotated-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, target) = git-revparse-single(repo, "HEAD^{commit}");
+  check-equal("git-revparse-single did not error", err1, 0);
+
+  let (_, tagger) = git-signature-now("Me", "me@example.com");
+  let (err2, _) = git-tag-create(repo, $tag-name, target, tagger, "Released", force?: #t);
+  check-equal("git-tag-create did not error", err2, 0);
+end test;
+
+define test tags-listing-all-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, tags) = git-tag-list(repo);
+  for (tag in tags)
+    let (err, _) = git-revparse-single(repo, tag);
+    check-equal("git-revparse-single did not error", err, 0);
+  end for;
+end test;
+
+define test tags-listing-glob-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, tags) = git-tag-list(repo, pattern: "v*");
+  for (tag in tags)
+    let (err, _) = git-revparse-single(repo, tag);
+    check-equal("git-revparse-single did not error", err, 0);
+  end for;
+end test;
+
+define suite libgit2-tags-test-suite ()
+  test tags-create-lightweight-test;
+  test tags-create-annotated-test;
+  test tags-lookups-annotations-test;
+  test tags-listing-all-test;
+  test tags-listing-glob-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
@@ -404,4 +466,5 @@ define suite libgit2-test-suite ()
   suite libgit2-trees-test-suite;
   suite libgit2-commits-test-suite;
   suite libgit2-references-test-suite;
+  suite libgit2-tags-test-suite;
 end suite;

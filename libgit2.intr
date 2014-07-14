@@ -250,5 +250,21 @@ define interface
 
   function "git_reference_name_to_id" => %git-reference-name-to-id,
     map-result: <libgit2-status>;
+
+  function "git_tag_create" => %git-tag-create,
+    map-result: <libgit2-status>;
+
+  function "git_tag_create_lightweight" => %git-tag-create-lightweight,
+    map-result: <libgit2-status>;
+
+  function "git_tag_lookup",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_tag_list" => %git-tag-list,
+    map-result: <libgit2-status>;
+
+  function "git_tag_list_match" => %git-tag-list-match,
+    map-result: <libgit2-status>;
 end interface;
 

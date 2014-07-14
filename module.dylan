@@ -2114,7 +2114,6 @@ define module libgit2
     git-tag-free,
     git-tag-id,
     git-tag-list,
-    git-tag-list-match,
     git-tag-lookup,
     git-tag-lookup-prefix,
     git-tag-message,

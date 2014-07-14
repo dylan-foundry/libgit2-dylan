@@ -14,5 +14,6 @@ files:        library
               oid
               refs
               repository
+              tag
               tree
 c-object-files: ext/libgit2/libgit2.a

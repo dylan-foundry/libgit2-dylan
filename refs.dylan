@@ -17,15 +17,9 @@ define function git-reference-list
   let c-refs = make(<git-strarray*>);
   let err = %git-reference-list(c-refs, repo);
   if (err = 0)
-    let refs-size = git-strarray$count(c-refs);
-    let refs = make(<vector>, size: refs-size);
-    let c-refs = git-strarray$strings(c-refs);
-    for (i from 0 below refs-size)
-      refs[i] := c-refs[i];
-    end for;
-    values(0, refs)
+    values(0, strarray-to-vector(c-refs))
   else
-    values(0, #f)
+    values(err, #f)
   end if
 end function git-reference-list;
 
