@@ -48,3 +48,14 @@ define function strarray-to-vector (sa :: <git-strarray*>) => (v :: <vector>)
   end for;
   v
 end function strarray-to-vector;
+
+define function sequence-to-strarray (seq :: <sequence>) => (sa :: <git-strarray*>)
+  let sa = make(<git-strarray*>);
+  git-strarray$count(sa) := size(seq);
+  let strings = make(<C-string*>, size: size(seq));
+  for (i from 0, s in seq)
+    strings[i] := s;
+  end for;
+  git-strarray$strings(sa) := strings;
+  sa
+end function sequence-to-strarray;

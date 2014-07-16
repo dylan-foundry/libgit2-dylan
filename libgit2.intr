@@ -110,6 +110,10 @@ define interface
     map-result: <libgit2-status>,
     output-argument: 1;
 
+  function "git_repository_index",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
   function "git_clone" => %git-clone,
     map-result: <libgit2-status>,
     output-argument: 1;
@@ -198,6 +202,42 @@ define interface
   function "git_commit_tree",
     map-result: <libgit2-status>,
     output-argument: 1;
+
+  function "git_index_add_bypath" => git-index-add-by-path;
+
+  function "git_index_add_all" => %git-index-add-all,
+    map-result: <libgit2-status>;
+
+  function "git_index_remove_all" => %git-index-remove-all,
+    map-result: <libgit2-status>;
+
+  function "git_index_update_all" => %git-index-update-all,
+    map-result: <libgit2-status>;
+
+  function "git_index_remove_bypath" => git-index-remove-by-path;
+
+  function "git_index_entrycount" => git-index-entry-count;
+
+  function "git_index_get_byindex" => git-index-get-by-index;
+
+  function "git_index_get_bypath" => %git-index-get-by-path;
+
+  function "git_index_new",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_index_open",
+    map-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_index_read" => %git-index-read,
+    map-result: <libgit2-status>;
+
+  function "git_index_write_tree" => %git-index-write-tree,
+    map-result: <libgit2-status>;
+
+  function "git_index_write_tree_to" => %git-index-write-tree-to,
+    map-result: <libgit2-status>;
 
   function "git_tree_lookup",
     map-result: <libgit2-status>,

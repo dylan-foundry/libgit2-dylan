@@ -459,6 +459,123 @@ define suite libgit2-tags-test-suite ()
   test tags-listing-glob-test;
 end suite;
 
+define test index-loading-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, idx) = git-repository-index(repo);
+  check-equal("git-repository-index did not error", err1, 0);
+
+  let (err2, idx) = git-index-open("./temp_testrepo/.git/index");
+  check-equal("git-index-open did not error", err2, 0);
+end test;
+
+define test creating-in-memory-test ()
+  let (err, _) = git-index-new();
+  check-equal("git-index-new did not error", err, 0);
+end test;
+
+define test index-disk-test ()
+  let repo = default-repository-and-oid();
+  let (_, idx) = git-repository-index(repo);
+
+  // make the in-memory index match what's on disk
+  let err1 = git-index-read(idx, force?: #t);
+  check-equal("git-index-read did not error", err1, 0);
+
+  // write the in-memory index to disk
+  let err2 = git-index-write(idx);
+  check-equal("git-index-write did not error", err2, 0);
+end test;
+
+define test index-trees-test ()
+  let repo = default-repository-and-oid();
+
+  let (err1, tree) = git-revparse-single(repo, "HEAD~^{tree}");
+  check-equal("git-revparse-single did not error", err1, 0);
+  tree := pointer-cast(<git-tree*>, tree);
+
+  let (_, repo-idx) = git-repository-index(repo);
+
+  let err2 = git-index-read-tree(repo-idx, tree);
+  check-equal("git-index-read-tree did not error", err2, 0);
+
+  // write the index contents to the ODB as a tree
+  let (err3, _) = git-index-write-tree(repo-idx);
+  check-equal("git-index-write-tree did not error", err3, 0);
+
+  // in-memory indexes can write trees to any repo
+  let (_, other-repo) = git-repository-open("./temp_repo");
+  let (err4, _) = git-index-write-tree(repo-idx, repository: other-repo);
+  check-equal("git-index-write-tree did not error", err4, 0);
+end test;
+
+define test index-entries-test ()
+  let repo = default-repository-and-oid();
+  let (_, idx) = git-repository-index(repo);
+
+  // access by index
+  let count = git-index-entry-count(idx);
+  for (i from 0 below count)
+    let entry = git-index-get-by-index(idx, i);
+    assert-true(instance?(entry, <git-index-entry*>));
+  end for;
+
+  // access by path
+  let entry = git-index-get-by-path(idx, "test/alloc.c");
+  assert-true(instance?(entry, <git-index-entry*>));
+end test;
+
+define function match
+    (path :: <string>, spec :: <string>, payload)
+ => (ret :: <integer>)
+  0
+end function;
+
+define C-callable-wrapper callback-of-match of \match
+  parameter path :: <C-string>;
+  parameter spec :: <C-string>;
+  parameter payload :: <C-void*>;
+  result res :: <C-int>;
+end C-callable-wrapper;
+
+define test index-conflicts-test ()
+  // TODO: implement me
+end test;
+
+define test index-add-and-remove-test ()
+  let repo = default-repository-and-oid();
+  let (_, idx) = git-repository-index(repo);
+
+  // force a single file to be added (even if it is ignored)
+  let err1 = git-index-add-by-path(idx, "test/alloc.c");
+  check-equal("git-index-add-by-path did not error", err1, 0);
+  // ... or removed
+  let err2 = git-index-remove-by-path(idx, "test/alloc.c");
+  check-equal("git-index-remove-by-path did not error", err2, 0);
+
+  let paths = #["test/*"];
+  let err3 = git-index-add-all(idx, paths,
+                               callback: callback-of-match,
+                               flags: $GIT-INDEX-ADD-DEFAULT);
+  check-equal("git-index-add-all did not error", err3, 0);
+
+  let err4 = git-index-remove-all(idx, paths, callback: callback-of-match);
+  check-equal("git-index-remove-all did not error", err4, 0);
+
+  let err5 = git-index-update-all(idx, paths, callback: callback-of-match);
+  check-equal("git-index-update-all did not error", err5, 0);
+end test;
+
+define suite libgit2-index-test-suite ()
+  test index-loading-test;
+  test creating-in-memory-test;
+  test index-disk-test;
+  test index-trees-test;
+  test index-entries-test;
+  test index-conflicts-test;
+  test index-add-and-remove-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
@@ -467,4 +584,5 @@ define suite libgit2-test-suite ()
   suite libgit2-commits-test-suite;
   suite libgit2-references-test-suite;
   suite libgit2-tags-test-suite;
+  suite libgit2-index-test-suite;
 end suite;

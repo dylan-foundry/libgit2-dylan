@@ -11,6 +11,7 @@ files:        library
               checkout
               clone
               commit
+              index
               oid
               refs
               repository
