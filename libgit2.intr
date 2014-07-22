@@ -91,128 +91,128 @@ define interface
     equate: {"char *" => <c-string>};
 
   function "git_repository_open" => %git-repository-open,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_open_ext" => %git-repository-open-ext,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_open_bare",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_init" => %git-repository-init,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_init_ext" => %git-repository-init-ext,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_index",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_clone" => %git-clone,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_head",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_config",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_odb",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_repository_index",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_remote_create",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_remote_create_with_fetchspec",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_clone_into" => %git-clone-into,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_config_set_bool",
     map-argument: { "value" => <C-boolean> },
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   // TODO: check other git_config_set functions
 
   // setting output-argument: 1 would result in an error (No next method)
   // so I'm just renaming it, then defining a wrapper below.
   function "git_oid_fromstr" => %git-oid-from-string,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_oid_allocfmt" => %git-oid-allocfmt;
 
   function "git_commit_create" => %git-commit-create,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_commit_lookup",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_commit_lookup_prefix",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_commit_parentcount" => git-commit-parent-count;
 
   function "git_commit_parent",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_commit_nth_gen_ancestor",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_blob_lookup",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_blob_lookup_prefix",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_blob_filtered_content" => %git-blob-filtered-content,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_blob_create_fromworkdir" => %git-blob-create-fromworkdir,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_blob_create_fromdisk" => %git-blob-create-fromdisk,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_blob_create_frombuffer" => %git-blob-create-frombuffer,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_commit_tree",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_index_add_bypath" => git-index-add-by-path;
 
   function "git_index_add_all" => %git-index-add-all,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_index_remove_all" => %git-index-remove-all,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_index_update_all" => %git-index-update-all,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_index_remove_bypath" => git-index-remove-by-path;
 
@@ -223,88 +223,88 @@ define interface
   function "git_index_get_bypath" => %git-index-get-by-path;
 
   function "git_index_new",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_index_open",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_index_read" => %git-index-read,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_index_write_tree" => %git-index-write-tree,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_index_write_tree_to" => %git-index-write-tree-to,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_tree_lookup",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_tree_entry_byindex" => git-tree-entry-by-index;
   function "git_tree_entry_byid" => git-tree-entry-by-id;
   function "git_tree_entry_byname" => git-tree-entry-by-name;
   function "git_tree_entry_bypath" => git-tree-entry-by-path,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_revparse_single",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_treebuilder_create" => %git-treebuilder-create,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_treebuilder_insert",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_treebuilder_write" => %git-treebuilder-write,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_signature_now",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_reference_create" => %git-reference-create,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_reference_symbolic_create" => %git-reference-symbolic-create,
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_reference_dwim",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_reference_list" => %git-reference-list,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_reference_lookup",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_reference_name_to_id" => %git-reference-name-to-id,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_tag_create" => %git-tag-create,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_tag_create_lightweight" => %git-tag-create-lightweight,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_tag_lookup",
-    map-result: <libgit2-status>,
+    map-error-result: <libgit2-status>,
     output-argument: 1;
 
   function "git_tag_list" => %git-tag-list,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 
   function "git_tag_list_match" => %git-tag-list-match,
-    map-result: <libgit2-status>;
+    map-error-result: <libgit2-status>;
 end interface;
 

@@ -9,14 +9,14 @@ end method size;
 
 define function git-treebuilder-create
     (#key source :: false-or(<git-tree*>) = #f)
- => (err, treebuilder :: <git-treebuilder*>)
+ => (treebuilder :: <git-treebuilder*>)
   %git-treebuilder-create(if (source) source else null-pointer(<git-tree*>) end)
 end function git-treebuilder-create;
 
 define function git-treebuilder-write
     (repo :: <git-repository*>, bld :: <git-treebuilder*>)
- => (err, oid :: <git-oid*>)
+ => (oid :: <git-oid*>)
   let oid = make(<git-oid*>);
-  let err = %git-treebuilder-write(oid, repo, bld);
-  values(err, oid)
+  %git-treebuilder-write(oid, repo, bld);
+  oid
 end function git-treebuilder-write;

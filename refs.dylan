@@ -5,22 +5,18 @@ copyright: See LICENSE file in this distribution.
 
 define function git-reference-name-to-id
     (repo :: <git-repository*>, name :: <string>)
- => (err, oid :: <git-oid*>)
+ => (oid :: <git-oid*>)
   let oid = make(<git-oid*>);
-  let err = %git-reference-name-to-id(oid, repo, name);
-  values(err, oid)
+  %git-reference-name-to-id(oid, repo, name);
+  oid
 end function git-reference-name-to-id;
 
 define function git-reference-list
     (repo :: <git-repository*>)
- => (err, refs :: false-or(<sequence>))
+ => (refs :: false-or(<sequence>))
   let c-refs = make(<git-strarray*>);
-  let err = %git-reference-list(c-refs, repo);
-  if (err = 0)
-    values(0, strarray-to-vector(c-refs))
-  else
-    values(err, #f)
-  end if
+  %git-reference-list(c-refs, repo);
+  strarray-to-vector(c-refs)
 end function git-reference-list;
 
 define method git-reference-create
@@ -28,7 +24,7 @@ define method git-reference-create
      #key force? :: <boolean> = #f,
           signature :: false-or(<git-signature*>) = #f,
           log-message :: false-or(<string>) = #f)
- => (err, ref :: <git-reference*>)
+ => (ref :: <git-reference*>)
   %git-reference-create(repo,
                         name,
                         oid,
@@ -42,7 +38,7 @@ define method git-reference-create
      #key force? :: <boolean> = #f,
           signature :: false-or(<git-signature*>) = #f,
           log-message :: false-or(<string>) = #f)
- => (err, ref :: <git-reference*>)
+ => (ref :: <git-reference*>)
   %git-reference-symbolic-create(repo,
                                  name,
                                  target,

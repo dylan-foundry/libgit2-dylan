@@ -5,21 +5,20 @@ copyright: See LICENSE file in this distribution.
 
 define function git-index-read
     (idx :: <git-index*>, #key force? :: <boolean> = #f)
- => (err)
+ => ()
   %git-index-read(idx, if (force?) 1 else 0 end)
 end function git-index-read;
 
 define function git-index-write-tree
     (idx :: <git-index*>, #key repository :: false-or(<git-repository*>) = #f)
- => (err, new-tree-id :: <git-oid*>)
+ => (new-tree-id :: <git-oid*>)
   let oid = make(<git-oid*>);
-  let err
-    = if (repository)
-        %git-index-write-tree-to(oid, idx, repository)
-      else
-        %git-index-write-tree(oid, idx)
-      end if;
-  values(err, oid)
+  if (repository)
+    %git-index-write-tree-to(oid, idx, repository)
+  else
+    %git-index-write-tree(oid, idx)
+  end if;
+  oid
 end function git-index-write-tree;
 
 define function git-index-get-by-path
@@ -33,7 +32,7 @@ define function git-index-add-all
      #key flags :: <integer> = 0,
           callback :: false-or(<C-function-pointer>) = #f,
           payload = #f)
- => (err)
+ => ()
   let c-paths = sequence-to-strarray(paths);
   %git-index-add-all(idx, c-paths, flags,
                      if (callback) callback else null-pointer(<C-void*>) end,
@@ -44,7 +43,7 @@ define function git-index-remove-all
     (idx :: <git-index*>, paths :: <sequence>,
      #key callback :: false-or(<C-function-pointer>) = #f,
           payload = #f)
- => (err)
+ => ()
   let c-paths = sequence-to-strarray(paths);
   %git-index-remove-all(idx, c-paths,
                         if (callback) callback else null-pointer(<C-void*>) end,
@@ -55,7 +54,7 @@ define function git-index-update-all
     (idx :: <git-index*>, paths :: <sequence>,
      #key callback :: false-or(<C-function-pointer>) = #f,
           payload = #f)
- => (err)
+ => ()
   let c-paths = sequence-to-strarray(paths);
   %git-index-update-all(idx, c-paths,
                         if (callback) callback else null-pointer(<C-void*>) end,

@@ -24,7 +24,7 @@ define method git-repository-init
           template-path :: false-or(<string>) = #f,
           initial-head :: false-or(<string>) = #f,
           origin-url :: false-or(<string>) = #f)
- => (err, repo)
+ => (repo :: <git-repository*>)
   if (flags | mode | working-directory | description | template-path | initial-head | origin-url)
     let opts = make(<git-repository-init-options*>,
                     flags: flags,
@@ -34,7 +34,8 @@ define method git-repository-init
                     template-path: template-path,
                     initial-head: initial-head,
                     origin-url: origin-url);
-    %git-repository-init-ext(path, opts)
+    //%git-repository-init-ext(path, opts)
+    make(<git-repository*>)
   else
     %git-repository-init(path, if (bare?) 1 else 0 end)
   end if
@@ -44,7 +45,7 @@ define method git-repository-open
     (path :: <string>,
      #key flags :: false-or(<integer>) = #f,
      ceiling-directories :: false-or(<string>) = #f)
- => (err, repo :: <git-repository*>)
+ => (repo :: <git-repository*>)
   if (flags | ceiling-directories)
     %git-repository-open-ext(path,
                              if (flags) flags else 0 end,
