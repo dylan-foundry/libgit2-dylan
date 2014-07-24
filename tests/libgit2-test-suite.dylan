@@ -640,6 +640,31 @@ define suite libgit2-index-test-suite ()
   test index-add-and-remove-test;
 end suite;
 
+define test status-iterating-test ()
+  let repo = default-repository-and-oid();
+  let opts = make(<git-status-options*>);
+  let statuses = git-status-list(repo, opts);
+  for (i from 0 below size(statuses))
+    let status = git-status-by-index(statuses, i);
+    check-instance?("git-status-by-index returns a git-status-entry",
+                    <git-status-entry*>, status);
+  end for;
+end test;
+
+define test status-iterating-forward-iteration-protocol-test ()
+  let repo = default-repository-and-oid();
+  let opts = make(<git-status-options*>);
+  for (status in git-status-list(repo, opts))
+    check-instance?("git-status-list returns a list of git-status-entry",
+                    <git-status-entry*>, status);
+  end for;
+end test;
+
+define suite libgit2-status-test-suite ()
+  test status-iterating-test;
+  test status-iterating-forward-iteration-protocol-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
@@ -649,4 +674,5 @@ define suite libgit2-test-suite ()
   suite libgit2-references-test-suite;
   suite libgit2-tags-test-suite;
   suite libgit2-index-test-suite;
+  suite libgit2-status-test-suite;
 end suite;

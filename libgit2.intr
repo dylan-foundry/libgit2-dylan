@@ -90,6 +90,9 @@ define interface
     },
     equate: {"char *" => <c-string>};
 
+  pointer "git_status_list *" => <git-status-list*>,
+    superclasses: {<sequence>};
+
   function "git_repository_open" => %git-repository-open,
     map-error-result: <libgit2-status>,
     output-argument: 1;
@@ -290,6 +293,12 @@ define interface
 
   function "git_reference_name_to_id" => %git-reference-name-to-id,
     map-error-result: <libgit2-status>;
+
+  function "git_status_byindex" => git-status-by-index;
+
+  function "git_status_list_new" => git-status-list,
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
 
   function "git_tag_create" => %git-tag-create,
     map-error-result: <libgit2-status>;
