@@ -34,6 +34,7 @@ define method git-repository-init
                     template-path: template-path,
                     initial-head: initial-head,
                     origin-url: origin-url);
+    // TODO: fix this
     //%git-repository-init-ext(path, opts)
     make(<git-repository*>)
   else

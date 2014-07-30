@@ -2,11 +2,11 @@ module: libgit2-test-suite
 synopsis: Test suite for the libgit2 library.
 
 define constant $repository-url = "git://github.com/github/testrepo.git";
+define constant $commit-sha = "78cf42b3249a69c0602b8bcb074cb6a61156787f";
 
 define function default-repository-and-oid
     () => (repo :: <git-repository*>, oid :: <git-oid*>)
-  let sha = "78cf42b3249a69c0602b8bcb074cb6a61156787f";
-  let oid = git-oid-from-string(sha);
+  let oid = git-oid-from-string($commit-sha);
 
   let repo = git-repository-open("./temp_testrepo");
   values(repo, oid)
@@ -665,6 +665,130 @@ define suite libgit2-status-test-suite ()
   test status-iterating-forward-iteration-protocol-test;
 end suite;
 
+define test diff-index-to-working-directory-test ()
+  // like git diff
+  let repo = default-repository-and-oid();
+  let diff = git-diff-index-to-working-directory(repo);
+  check-instance?("git-diff-index-to-working-directory returns a git-diff",
+                  <git-diff*>, diff);
+end test;
+
+define test diff-head-to-index-test ()
+  // like git diff --cached
+  let repo = default-repository-and-oid();
+  let obj = git-revparse-single(repo, "HEAD^{tree}");
+
+  let tree = git-tree-lookup(repo, git-object-id(obj));
+
+  let diff = git-diff-tree-to-index(repo, tree);
+  check-instance?("git-diff-tree-to-index returns a git-diff",
+                  <git-diff*>, diff);
+end test;
+
+define test diff-head-to-working-directory-test ()
+  // like git diff HEAD
+  let repo = default-repository-and-oid();
+  let obj = git-revparse-single(repo, "HEAD^{tree}");
+
+  let tree = git-tree-lookup(repo, git-object-id(obj));
+
+  let diff = git-diff-tree-to-working-directory-with-index(repo, tree);
+  check-instance?("git-diff-tree-to-working-directory-with-index returns a git-diff",
+                  <git-diff*>, diff);
+end test;
+
+define test diff-commit-to-its-parent-test ()
+  // like git show <commit>
+  let repo = default-repository-and-oid();
+  let obj = git-revparse-single(repo, $commit-sha);
+  let commit = git-commit-lookup(repo, git-object-id(obj));
+  let parent = git-commit-parent(commit, 0);
+
+  let commit-tree = git-commit-tree(commit);
+  let parent-tree = git-commit-tree(parent);
+
+  let diff = git-diff-tree-to-tree(repo, commit-tree, parent-tree);
+  check-instance?("git-diff-tree-to-tree returns a git-diff",
+                  <git-diff*>, diff);
+end test;
+
+define test diff-rename-detection-test ()
+  let repo = default-repository-and-oid();
+  let diff = git-diff-index-to-working-directory(repo);
+  let opts = make(<git-diff-find-options*>,
+                  flags: logior($GIT-DIFF-FIND-RENAMES, $GIT-DIFF-FIND-COPIES, $GIT-DIFF-FIND-FOR-UNTRACKED));
+  assert-no-errors(git-diff-find-similar(diff, opts));
+end test;
+
+define function each-file
+    (diff-delta :: <git-diff-delta*>, progress :: <float>, payload)
+ => (res :: <integer>)
+  // do something
+  0
+end function;
+
+define C-callable-wrapper callback-of-each-file of \each-file
+  parameter diff-delta :: <git-diff-delta*>;
+  parameter progress :: <C-float>;
+  parameter payload :: <C-void*>;
+  result res :: <C-int>;
+end C-callable-wrapper;
+
+define function each-hunk
+    (diff-delta :: <git-diff-delta*>, hunk :: <git-diff-hunk*>, payload)
+ => (res :: <integer>)
+  // do something
+  0
+end function;
+
+define C-callable-wrapper callback-of-each-hunk of \each-hunk
+  parameter diff-delta :: <git-diff-delta*>;
+  parameter hunk :: <git-diff-hunk*>;
+  parameter payload :: <C-void*>;
+  result res :: <C-int>;
+end C-callable-wrapper;
+
+define function each-line
+    (diff-delta :: <git-diff-delta*>, hunk :: <git-diff-hunk*>, line :: <git-diff-line*>, payload)
+ => (res :: <integer>)
+  // do something
+  0
+end function;
+
+define C-callable-wrapper callback-of-each-line of \each-line
+  parameter diff-delta :: <git-diff-delta*>;
+  parameter hunk :: <git-diff-hunk*>;
+  parameter line :: <git-diff-line*>;
+  parameter payload :: <C-void*>;
+  result res :: <C-int>;
+end C-callable-wrapper;
+
+define test diff-iterating-deltas-test ()
+  let repo = default-repository-and-oid();
+  let diff = git-diff-index-to-working-directory(repo);
+  assert-no-errors(git-diff-foreach(diff, callback-of-each-file,
+                                    hunk-callback: callback-of-each-hunk,
+                                    line-callback: callback-of-each-line));
+end test;
+
+define test diff-generating-patch-test ()
+  let repo = default-repository-and-oid();
+  let diff = git-diff-index-to-working-directory(repo);
+  let patch = git-patch-from-diff(diff, 0);
+  check-instance?("git-patch-from-diff returns a git-patch",
+                  <git-patch*>, patch);
+end test;
+
+define suite libgit2-diff-test-suite ()
+  test diff-index-to-working-directory-test;
+  test diff-head-to-index-test;
+  test diff-head-to-working-directory-test;
+  test diff-commit-to-its-parent-test;
+  test diff-rename-detection-test;
+  test diff-iterating-deltas-test;
+  test diff-generating-patch-test;
+end suite;
+
 define suite libgit2-test-suite ()
   suite libgit2-repositories-test-suite;
   suite libgit2-objects-test-suite;
@@ -675,4 +799,5 @@ define suite libgit2-test-suite ()
   suite libgit2-tags-test-suite;
   suite libgit2-index-test-suite;
   suite libgit2-status-test-suite;
+  suite libgit2-diff-test-suite;
 end suite;

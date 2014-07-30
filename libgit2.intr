@@ -206,6 +206,29 @@ define interface
     map-error-result: <libgit2-status>,
     output-argument: 1;
 
+  function "git_diff_foreach" => %git-diff-foreach,
+    map-error-result: <libgit2-status>;
+
+  function "git_diff_index_to_workdir" => %git-diff-index-to-working-directory,
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_patch_from_diff",
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_diff_tree_to_index" => %git-diff-tree-to-index,
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_diff_tree_to_workdir_with_index" => %git-diff-tree-to-working-directory-with-index,
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
+
+  function "git_diff_tree_to_tree" => %git-diff-tree-to-tree,
+    map-error-result: <libgit2-status>,
+    output-argument: 1;
+
   function "git_index_add_bypath" => git-index-add-by-path;
 
   function "git_index_add_all" => %git-index-add-all,
