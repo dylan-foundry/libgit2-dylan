@@ -26,3 +26,6 @@ test: $(GENERATED_DYLAN_FILES)
 	rm -rf temp_*
 	dylan-compiler -build libgit2-test-suite-app
 	_build/bin/libgit2-test-suite-app
+
+clean:
+	$(MAKE) -C ext/libgit2 -f Makefile.embed clean
