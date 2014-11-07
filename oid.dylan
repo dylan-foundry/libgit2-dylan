@@ -7,9 +7,9 @@ define method git-oid-to-string (oid :: <git-oid*>) => (str :: <C-string>)
   %git-oid-allocfmt(oid)
 end method git-oid-to-string;
 
-define method git-oid-from-string (sha :: <string>) => (err, oid :: <git-oid*>)
+define method git-oid-from-string (sha :: <string>) => (oid :: <git-oid*>)
   let oid = make(<git-oid*>);
-  let err = %git-oid-from-string(oid, sha);
-  values(err, oid)
+  %git-oid-from-string(oid, sha);
+  oid
 end method git-oid-from-string;
 

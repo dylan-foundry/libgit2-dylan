@@ -25,7 +25,7 @@ define method git-clone
           remote-name = #f,
           checkout-branch = #f,
           signature = #f)
- => (err, repo)
+ => (repo)
   let options
     = if (checkout-options | remote-callbacks | bare? | ignore-cert-errors |
           local? | remote-name | checkout-branch | signature)
@@ -65,7 +65,7 @@ define method git-clone-into
           ancestor-label = #f,
           our-label = #f,
           their-label = #f)
- => (err)
+ => ()
   let options
     = if (checkout-strategy | disable-filters | dir-mode | file-mode | file-open-flags |
           notify-flags | notify-callback | notify-payload | progress-callback |

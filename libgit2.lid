@@ -7,8 +7,16 @@ files:        library
               module
               utilities
               libgit2
+              blob
               checkout
               clone
+              commit
+              diff
+              index
               oid
+              refs
               repository
+              status
+              tag
+              tree
 c-object-files: ext/libgit2/libgit2.a
